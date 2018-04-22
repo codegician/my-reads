@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { Route } from react-router-dom
-import * as BooksAPI from './BooksAPI'
+import { Route } from 'react-router-dom'
+import * as BooksAPI from './utils/BooksAPI'
+import BookList from './components/BookList'
+import Search from './components/Search'
 import './App.css';
 
 class BooksApp extends React.Component {
@@ -10,35 +12,26 @@ class BooksApp extends React.Component {
   }
 
   componentDidMount(){
-    this.fetchMyBooks()
+    this.pullBooks()
   }
   pullBooks = () => {
     BooksAPI.getAll().then(( books ) => this.setState({ books })) 
   }
 
-  updateShelf = ( bookId, shelf ) => {
-    BooksAPI.update( bookId, shelf ).then(() => { this.pullBooks()
+  updateShelf = ( book, shelf ) => {
+    BooksAPI.update( book, shelf ).then(() => { this.pullBooks()
     })
   }
   
-  // updateShelf = (shelf) => {
-  //   this.setState((currentState) => ({
-  //     shelf: currentState.shelf.filter((s) => {
-  //         return s.id === shelf.id.concat([ book ])
-  //     })
-  //   }))
-
-  
-  }
 
 render() {
   return (
       <div className = "app">
               <Route exact path ="/search" 
                 render = { ({ history }) => (
-                  <SearchPage 
-                    myBooks = { this.state.books } updateShelf = {( bookId, shelf ) => {
-                      this.updateShelf( bookId, shelf )
+                  <Search 
+                    theBooks = { this.state.books } updateShelf = {( book, shelf ) => {
+                      this.updateShelf( book, shelf )
                         history.push('/')
                       }}
                   />
@@ -48,8 +41,8 @@ render() {
             <Route exact path = '/' render = {() => (
                 <BookList 
                   books = { this.state.books }
-                  updateShelf = {( bookId, shelf ) => {
-                    this.updateShelf( bookId, shelf )
+                  updateShelf = {( book, shelf ) => {
+                    this.updateShelf( book, shelf )
                   }}
                 />
               )}
